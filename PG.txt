@@ -1,0 +1,257 @@
+Practical 1 - Led blinking
+Connection:
+Connect Pin no.7 (GPIO 4) to LED1 of LED module
+Connect Pin no.11 (GPIO 17) to LED2 of LED module
+Connect Pin no.13 (GPIO 27) to LED3 of LED module
+Connect Pin no.15 (GPIO 22) to LED4 of LED module
+Connect Pin no.6 (GND) to GND of LED module
+Code:
+import RPi.GPIO as GP 
+import time 
+GP.setmode(GP.BOARD) 
+GP.setup(7,GP.OUT) 
+GP.setup(11,GP.OUT)
+GP.setup(13,GP.OUT) 
+GP.setup(15,GP.OUT) 
+while (1): 
+GP.output(7,GP.HIGH) 
+time.sleep(0.2) 
+GP.output(11,GP.LOW) 
+time.sleep(0.2) 
+GP.output(13,GP.HIGH)
+time.sleep(0.2) 
+GP.output(15,GP.LOW) 
+time.sleep(0.2) 
+print (" LED IS ON! ") 
+GP.cleanup()
+
+
+Practical 2 - time on seven segment display
+Connection:
+Pin no.16 (GPIO 23) to CLK of Timer
+Pin no.18 (GPIO 24) to DIO of Timer
+Pin no.4 (5V Power) to VCC of Timer
+Pin no.6 (GND) to GND of Timer
+Code:
+from time import sleep
+import tm1637
+try:
+import Thread
+except:
+from threading import Thread
+Display = tm1637.TM1637(CLK=21, DIO=20, brightness=1.0)
+try:
+print(“Starting”)
+Display.StartClock(military_time=True)
+Display.SetBrightness(1.0)
+while(True):
+Display.ShowDoublePoint(True)
+sleep(1)
+Display.ShowDoublePoint(False)
+sleep(1)
+Display.ShowDoublePoint(False)
+sleep(1)
+Display.StopClock()
+Thread.interrupt_main()
+except KeyboardInterrupt:
+print(“Closing”)
+Display.cleanup()
+
+
+Practical 3 -Rfid
+Connection:
+Connect TX of Card Reader to RX of TTL
+Connect GND of Card Reader to GND of TTL
+Connect Red of Power Supply to VCC of Card Reader
+Connect Black of Power Supply to GND of Card Reader
+Connect TTL to Raspberry Pi
+Code:
+import RPi.GPIO as GP
+import time
+import serial
+GP.setmode(GP.BOARD)
+def read_rfid():
+ser=serial.Serial(“/dev/ttyUSB0”)
+ser.baudrate=9600
+data=ser.read(12)
+ser.close()
+return data
+try:
+while True:
+id=read_rfid()
+print(id)
+if id==b’1D00AF5623C7’:
+print (“Access Granted”)
+time.sleep(2)
+else:
+print (“Access Denied”) time.sleep(2) finally:
+GP.cleanup()
+
+
+
+Practical 4 - Camera
+
+Commands: To install Pi-camera packages.
+ sudo apt-get install python-picamera
+ sudo apt-get install python3-picamera
+ sudo pip install picamera
+
+
+Code:
+import time
+import picamera
+camera=picamera.PiCamera()
+camera.resolution=(1024,768) 
+camera.start_preview()
+time.sleep(2)
+camera.capture(‘/home/pi/Desktop/visitor/images%s.jpg’)
+camera.stop_preview
+
+
+Practical 5 - IOT based Web Automation
+
+Connection:
+Connect Pin no.3 (GPIO 2) to LED1 of LED module
+Connect Pin no.6 (GND) to GND of LED module
+
+Commands: It should be executed in Terminal.
+ sudo apt-get update
+ sudo apt-get upgrade
+ cd/home/pi/Downloads (Move to the downloaded folder)
+ tar xvzf WebIOPi-0.7.1.tar.gz
+ cd WebIOPi-0.7.1
+ wget https://raw.githubusercontent.com/doublebind/raspi/master/webiopipi2bplus.patch
+ patch -p1 -i webiopi-pi2bplus.patch
+ sudo ./setup.sh
+ sudo reboot
+ sudo webiopi -d -c/etc/webiopi/config
+
+Go to Web browser
+Type http://172.16.250.200:8000/
+
+
+
+
+Practical 6 - Controlling Raspberry Pi with Telegram
+
+Connection:
+Connect Pin no.3 (GPIO 2) to LED1 of LED module
+Connect Pin no.6 (GND) to GND of LED module
+Step 1: Install Telegram Bot on Raspberry Pi.
+ sudo apt-get update
+ sudo apt-get upgrade
+ sudo apt-get install python-pip
+ sudo pip install telepot
+Step 2: Create a Bot in your Telegram App.
+
+Code:
+import time,datetime 
+import RPi.GPIO as GP 
+import telepot
+import sys
+def on(pin): 
+GP.output(pin, GP.HIGH) 
+def off(pin): 
+GP.output(pin, GP.LOW)
+return
+GP.setmode(GP.BOARD) 
+GP.setwarnings(False) 
+GP.setup(3, GP.OUT) 
+def handle(msg): 
+chat id = msg['chat']['id'] 
+command = msg['text'] 
+print ('Got command: %s' % command) 
+if command == '/on':
+bot.sendMessage(chat_id, on(3)) 
+elif command == '/off':
+bot.sendMessage(chat_id, off(3)) 
+bot = telepot.Bot('Enter_your_bot_token_here')
+bot.message_loop(handle) 
+print ("I am Listening...") 
+while 1:
+try:
+time.sleep(10) 
+except KeyboardInterrupt: 
+print ('Program interrupted') 
+GP.cleanup()
+exit()
+except:
+print (‘Other error’) 
+GP.cleanup()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
